@@ -58,15 +58,20 @@ export interface CreateApiUrlOptions {
 export function createApiUrl(options: CreateApiUrlOptions = {}): string {
   const { devFallback = 'http://localhost:8000' } = options;
   
-  // Try the standard env var first
-  const fromEnv = import.meta.env.VITE_DATABASE_API_URL || import.meta.env.VITE_API_URL;
+  // CRITICAL: Access env vars via bracket notation so Vite does NOT statically
+  // replace them during the LIBRARY build. They must survive as-is so the
+  // CONSUMING APP's Vite build resolves them with the correct values.
+  // Direct property access (import.meta.env.VITE_X) gets replaced at lib build
+  // time when the var is unset → undefined → dead-code-eliminated → 405 errors.
+  const env = import.meta.env;
+  const fromEnv = env['VITE_DATABASE_API_URL'] || env['VITE_API_URL'];
   
   if (fromEnv) {
     return fromEnv;
   }
   
   // In development, use the fallback
-  if (import.meta.env.DEV) {
+  if (env['DEV']) {
     console.log(`[RationalBloks] Using dev fallback API URL: ${devFallback}`);
     return devFallback;
   }
