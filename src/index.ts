@@ -39,12 +39,15 @@
 export { 
   BaseApi, 
   createAuthApi, 
+  createApiUrl,
   getStoredUser, 
   getStoredToken, 
   isAuthenticated,
   // OAuth: Only generateOAuthNonce is public (THE ONE WAY)
   generateOAuthNonce
 } from './api';
+
+export type { CreateApiUrlOptions } from './api';
 
 export type { 
   User, 
@@ -60,5 +63,5 @@ export type {
 } from './api';
 
 // Auth - Authentication context and providers
-export { useAuth, createAuthProvider, createAppRoot } from './auth';
-export type { AuthState, AuthActions, AuthContextType, AuthConfig } from './auth';
+export { useAuth, createAuthProvider, createAppRoot, ProtectedRoute } from './auth';
+export type { AuthState, AuthActions, AuthContextType, AuthConfig, ProtectedRouteProps } from './auth';

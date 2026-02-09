@@ -21,6 +21,10 @@ export {
   generateOAuthNonce
 } from './client';
 
+// API URL factory
+export { createApiUrl } from './createApiUrl';
+export type { CreateApiUrlOptions } from './createApiUrl';
+
 export type { 
   User, 
   ApiKey, 

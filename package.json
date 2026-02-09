@@ -1,7 +1,7 @@
 {
   "name": "@rationalbloks/frontblok-auth",
-  "version": "0.3.1",
-  "description": "Authentication mechanics for RationalBloks frontends - JWT tokens, Google OAuth, password reset, email verification, cross-tab sync",
+  "version": "0.4.0",
+  "description": "Authentication mechanics for RationalBloks frontends - JWT tokens, Google OAuth, password reset, email verification, cross-tab sync, API URL resolution, route protection",
   "author": "RationalBloks Team",
   "license": "MIT",
   "private": false,
