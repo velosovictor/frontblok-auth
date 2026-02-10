@@ -1,9 +1,6 @@
-/**
- * React 19 TypeScript fixes
- * Addresses type definition issues with React 19.1.1
- * 
- * Include in tsconfig.json: "include": ["src/core/types/*.d.ts"]
- */
+// React 19 TypeScript fixes
+// Addresses type definition issues with React 19.1.1
+// Include in tsconfig.json: "include": ["src/core/types/*.d.ts"]
 
 declare module 'react' {
   // Fix useState export

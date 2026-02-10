@@ -41,10 +41,8 @@ export type AuthContextType = AuthState & AuthActions;
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-/**
- * Hook to access authentication state and actions.
- * Must be used within an AuthProvider.
- */
+// Hook to access authentication state and actions.
+// Must be used within an AuthProvider.
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -57,19 +55,8 @@ export const useAuth = () => {
 // PROVIDER FACTORY
 // ========================================================================
 
-/**
- * Creates an AuthProvider component that uses the specified API instance.
- * This allows the universal auth context to work with any API that extends BaseApi.
- * 
- * @example
- * ```typescript
- * // In your app's auth setup:
- * import { createAuthProvider } from '@/core/auth';
- * import { myAppApi } from '@/services/myAppApi';
- * 
- * export const MyAppAuthProvider = createAuthProvider(myAppApi);
- * ```
- */
+// Creates an AuthProvider component that uses the specified API instance.
+// This allows the universal auth context to work with any API that extends BaseApi.
 export function createAuthProvider(api: BaseApi) {
   const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [state, setState] = useState<AuthState>({

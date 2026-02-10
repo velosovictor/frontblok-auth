@@ -24,21 +24,15 @@ import { Navigate } from 'react-router-dom';
 
 export interface ProtectedRouteProps {
   children: React.ReactNode;
-  /** 
-   * The useAuth hook from your app's datablokApi.ts (useClientAuth).
-   * We accept this as a prop instead of importing it directly to avoid
-   * circular dependencies and keep the package decoupled.
-   */
+  // The useAuth hook from your app's datablokApi.ts (useClientAuth).
+  // We accept this as a prop instead of importing it directly to avoid
+  // circular dependencies and keep the package decoupled.
   useAuth: () => { isAuthenticated: boolean };
-  /**
-   * Where to redirect unauthenticated users. Default: '/auth'
-   */
+  // Where to redirect unauthenticated users. Default: '/auth'
   redirectTo?: string;
 }
 
-/**
- * Route wrapper that redirects to the auth page if the user is not authenticated.
- */
+// Route wrapper that redirects to the auth page if the user is not authenticated.
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
   children, 
   useAuth,

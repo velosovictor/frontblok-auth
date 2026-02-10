@@ -15,14 +15,12 @@ import { createRoot } from 'react-dom/client';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 export interface AuthConfig {
-  /** Google OAuth Client ID (optional - only needed if using Google Sign-In) */
+  // Google OAuth Client ID (optional - only needed if using Google Sign-In)
   googleClientId?: string;
 }
 
-/**
- * Creates and renders the app root with authentication providers.
- * This is the universal way to bootstrap a React app with auth.
- */
+// Creates and renders the app root with authentication providers.
+// This is the universal way to bootstrap a React app with auth.
 export function createAppRoot(
   App: React.ComponentType,
   config: AuthConfig = {}

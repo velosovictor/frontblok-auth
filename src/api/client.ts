@@ -35,23 +35,17 @@ import type {
 // OAUTH UTILITIES (defined before class so they can be used within it)
 // ========================================================================
 
-/**
- * Generate a cryptographically secure nonce for OAuth CSRF protection.
- * 
- * USAGE:
- * 1. Call generateOAuthNonce() in component useState (runs once on mount)
- * 2. Pass the nonce to GoogleLogin component via the 'nonce' prop
- * 3. On success, call authApi.googleLogin(credential) - it handles the rest
- * 
- * @example
- * ```typescript
- * const [nonce] = useState(() => generateOAuthNonce());
- * // Pass to GoogleLogin: <GoogleLogin nonce={nonce} onSuccess={...} />
- * // On success: await authApi.googleLogin(credential);
- * ```
- * 
- * @returns The generated nonce string
- */
+// Generate a cryptographically secure nonce for OAuth CSRF protection.
+//
+// USAGE:
+// 1. Call generateOAuthNonce() in component useState (runs once on mount)
+// 2. Pass the nonce to GoogleLogin component via the 'nonce' prop
+// 3. On success, call authApi.googleLogin(credential) - it handles the rest
+//
+// Example:
+//   const [nonce] = useState(() => generateOAuthNonce());
+//   // Pass to GoogleLogin: <GoogleLogin nonce={nonce} onSuccess={...} />
+//   // On success: await authApi.googleLogin(credential);
 export const generateOAuthNonce = (): string => {
   const array = new Uint8Array(32);
   crypto.getRandomValues(array);
@@ -61,17 +55,13 @@ export const generateOAuthNonce = (): string => {
   return nonce;
 };
 
-/**
- * Retrieve the stored OAuth nonce.
- * @returns The stored nonce or null if not found
- */
+// Retrieve the stored OAuth nonce.
+// Returns the stored nonce or null if not found.
 export const getOAuthNonce = (): string | null => {
   return sessionStorage.getItem('google_oauth_nonce');
 };
 
-/**
- * Clear the stored OAuth nonce (call after successful login).
- */
+// Clear the stored OAuth nonce (call after successful login).
 export const clearOAuthNonce = (): void => {
   sessionStorage.removeItem('google_oauth_nonce');
   console.log('[OAuth] Cleared nonce');
@@ -81,24 +71,20 @@ export const clearOAuthNonce = (): void => {
 // BASE API CLASS
 // ========================================================================
 
-/**
- * BaseApi - Universal HTTP client with authentication.
- * 
- * Extend this class to add your application-specific API methods.
- * 
- * @example
- * ```typescript
- * class MyAppApi extends BaseApi {
- *   constructor() {
- *     super(import.meta.env.VITE_API_URL || 'https://api.myapp.com');
- *   }
- *   
- *   async getProducts() {
- *     return this.request<Product[]>('/api/products/');
- *   }
- * }
- * ```
- */
+// BaseApi - Universal HTTP client with authentication.
+//
+// Extend this class to add your application-specific API methods.
+//
+// Example:
+//   class MyAppApi extends BaseApi {
+//     constructor() {
+//       super(import.meta.env.VITE_API_URL || 'https://api.myapp.com');
+//     }
+//
+//     async getProducts() {
+//       return this.request<Product[]>('/api/products/');
+//     }
+//   }
 export class BaseApi {
   protected token: string | null = null;
   protected refreshToken: string | null = null;
@@ -124,11 +110,9 @@ export class BaseApi {
   // TOKEN MANAGEMENT
   // ========================================================================
 
-  /**
-   * Sync tokens across browser tabs when localStorage changes.
-   * Prevents "stale refresh token" issue where Tab A rotates the token
-   * but Tab B still has the old (now invalid) refresh token in memory.
-   */
+  // Sync tokens across browser tabs when localStorage changes.
+  // Prevents "stale refresh token" issue where Tab A rotates the token
+  // but Tab B still has the old (now invalid) refresh token in memory.
   private setupStorageListener(): void {
     if (typeof window !== 'undefined') {
       window.addEventListener('storage', (event) => {
@@ -149,10 +133,8 @@ export class BaseApi {
     }
   }
 
-  /**
-   * Start interval-based token check (runs every 60 seconds).
-   * More reliable than setTimeout which browsers throttle in background tabs.
-   */
+  // Start interval-based token check (runs every 60 seconds).
+  // More reliable than setTimeout which browsers throttle in background tabs.
   private startRefreshCheckInterval(): void {
     if (this.refreshCheckInterval) {
       clearInterval(this.refreshCheckInterval);
@@ -165,9 +147,7 @@ export class BaseApi {
     }, 60 * 1000);
   }
 
-  /**
-   * Handle tab visibility changes - check token when user returns to tab.
-   */
+  // Handle tab visibility changes - check token when user returns to tab.
   private setupVisibilityHandler(): void {
     if (typeof document !== 'undefined') {
       document.addEventListener('visibilitychange', () => {
@@ -186,9 +166,7 @@ export class BaseApi {
     }
   }
 
-  /**
-   * Check token expiry and refresh if needed.
-   */
+  // Check token expiry and refresh if needed.
   protected async checkAndRefreshToken(): Promise<void> {
     if (!this.token) return;
 
@@ -208,9 +186,7 @@ export class BaseApi {
     }
   }
 
-  /**
-   * Parse JWT to get expiration time.
-   */
+  // Parse JWT to get expiration time.
   protected getTokenExpiry(token: string): number | null {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
@@ -220,9 +196,7 @@ export class BaseApi {
     }
   }
 
-  /**
-   * Schedule proactive refresh 5 minutes before token expires.
-   */
+  // Schedule proactive refresh 5 minutes before token expires.
   protected scheduleProactiveRefresh(): void {
     if (this.proactiveRefreshTimer) {
       clearTimeout(this.proactiveRefreshTimer);
@@ -259,9 +233,7 @@ export class BaseApi {
     }, refreshIn);
   }
 
-  /**
-   * Load tokens from localStorage on initialization.
-   */
+  // Load tokens from localStorage on initialization.
   protected loadTokens(): void {
     const storedToken = localStorage.getItem('auth_token');
     const storedRefreshToken = localStorage.getItem('refresh_token');
@@ -281,9 +253,7 @@ export class BaseApi {
     }
   }
 
-  /**
-   * Wait for any pending token refresh to complete before making API calls.
-   */
+  // Wait for any pending token refresh to complete before making API calls.
   async ensureTokenReady(): Promise<void> {
     if (this.tokenRefreshPromise) {
       await this.tokenRefreshPromise;
@@ -291,9 +261,7 @@ export class BaseApi {
     }
   }
 
-  /**
-   * Refresh the access token using the refresh token.
-   */
+  // Refresh the access token using the refresh token.
   async refreshAccessToken(): Promise<boolean> {
     if (this.isRefreshing) {
       return this.refreshPromise || Promise.resolve(false);
@@ -363,16 +331,14 @@ export class BaseApi {
   // HTTP REQUEST METHOD
   // ========================================================================
 
-  /**
-   * Make an authenticated HTTP request.
-   * Handles token refresh, 401 retry, and rate limiting automatically.
-   * 
-   * This method is public so apps can make custom API calls without extending BaseApi.
-   * 
-   * @example
-   * const authApi = createAuthApi(API_URL);
-   * const data = await authApi.request<MyType>('/api/my-endpoint/', { method: 'POST', body: JSON.stringify(payload) });
-   */
+  // Make an authenticated HTTP request.
+  // Handles token refresh, 401 retry, and rate limiting automatically.
+  //
+  // This method is public so apps can make custom API calls without extending BaseApi.
+  //
+  // Example:
+  //   const authApi = createAuthApi(API_URL);
+  //   const data = await authApi.request<MyType>('/api/my-endpoint/', { method: 'POST', body: JSON.stringify(payload) });
   async request<T>(endpoint: string, options: RequestInit = {}, isRetry = false, retryCount = 0): Promise<T> {
     await this.ensureTokenReady();
     
@@ -511,10 +477,8 @@ export class BaseApi {
   // GOOGLE OAUTH AUTHENTICATION
   // ========================================================================
 
-  /**
-   * Internal: Authenticate with Google OAuth.
-   * Use googleLogin() instead.
-   */
+  // Internal: Authenticate with Google OAuth.
+  // Use googleLogin() instead.
   private async _googleOAuthLogin(credential: string, nonce: string): Promise<GoogleOAuthResponse> {
     console.log('[API] Google OAuth login attempt');
     
@@ -536,35 +500,31 @@ export class BaseApi {
     return data;
   }
 
-  /**
-   * Simplified Google OAuth login.
-   * 
-   * This is the default method for Google Sign-In. It handles the complete
-   * OAuth flow in a single call:
-   * 
-   * 1. Retrieve nonce from sessionStorage (must exist from generateOAuthNonce())
-   * 2. Send credential + nonce to backend for verification
-   * 3. Store JWT tokens on success
-   * 4. Clear nonce to prevent replay attacks
-   * 
-   * If any step fails, the entire operation fails cleanly. No partial states.
-   * 
-   * @param credential - The Google ID token (JWT from GoogleLogin onSuccess)
-   * @returns GoogleOAuthResponse with tokens, user data, and is_new_user flag
-   * @throws Error if nonce is missing or authentication fails
-   * 
-   * @example
-   * ```typescript
-   * // In component: generate nonce ONCE on mount
-   * const [nonce] = useState(() => generateOAuthNonce());
-   * 
-   * // Pass nonce to GoogleLogin, then on success:
-   * const handleSuccess = async (response: CredentialResponse) => {
-   *   const result = await authApi.googleLogin(response.credential!);
-   *   // Done! Tokens stored, nonce cleared, user authenticated.
-   * };
-   * ```
-   */
+  // Simplified Google OAuth login.
+  //
+  // This is the default method for Google Sign-In. It handles the complete
+  // OAuth flow in a single call:
+  //
+  // 1. Retrieve nonce from sessionStorage (must exist from generateOAuthNonce())
+  // 2. Send credential + nonce to backend for verification
+  // 3. Store JWT tokens on success
+  // 4. Clear nonce to prevent replay attacks
+  //
+  // If any step fails, the entire operation fails cleanly. No partial states.
+  //
+  // credential - The Google ID token (JWT from GoogleLogin onSuccess)
+  // Returns GoogleOAuthResponse with tokens, user data, and is_new_user flag
+  // Throws Error if nonce is missing or authentication fails
+  //
+  // Example:
+  //   // In component: generate nonce ONCE on mount
+  //   const [nonce] = useState(() => generateOAuthNonce());
+  //
+  //   // Pass nonce to GoogleLogin, then on success:
+  //   const handleSuccess = async (response: CredentialResponse) => {
+  //     const result = await authApi.googleLogin(response.credential!);
+  //     // Done! Tokens stored, nonce cleared, user authenticated.
+  //   };
   async googleLogin(credential: string): Promise<GoogleOAuthResponse> {
     console.log('[API] Google OAuth login');
     
@@ -588,12 +548,9 @@ export class BaseApi {
   // PASSWORD RESET FLOW
   // ========================================================================
 
-  /**
-   * Request a password reset email (forgot password flow).
-   * 
-   * @param email - The email address to send reset link to
-   * @returns Message confirming email was sent (or would be sent)
-   */
+  // Request a password reset email (forgot password flow).
+  // email - The email address to send reset link to.
+  // Returns message confirming email was sent (or would be sent).
   async requestPasswordReset(email: string): Promise<PasswordResetRequestResponse> {
     console.log('[API] Requesting password reset for:', email);
     
@@ -603,13 +560,10 @@ export class BaseApi {
     });
   }
 
-  /**
-   * Reset password using token from email.
-   * 
-   * @param token - The password reset token from the email link
-   * @param newPassword - The new password (min 8 characters)
-   * @returns Success message
-   */
+  // Reset password using token from email.
+  // token - The password reset token from the email link.
+  // newPassword - The new password (min 8 characters).
+  // Returns success message.
   async resetPassword(token: string, newPassword: string): Promise<PasswordResetResponse> {
     console.log('[API] Resetting password with token');
     
@@ -623,12 +577,9 @@ export class BaseApi {
   // EMAIL VERIFICATION FLOW
   // ========================================================================
 
-  /**
-   * Verify email address using token from verification email.
-   * 
-   * @param token - The verification token from the email link
-   * @returns Success message
-   */
+  // Verify email address using token from verification email.
+  // token - The verification token from the email link.
+  // Returns success message.
   async verifyEmail(token: string): Promise<EmailVerificationResponse> {
     console.log('[API] Verifying email with token');
     
@@ -638,12 +589,9 @@ export class BaseApi {
     });
   }
 
-  /**
-   * Request a new verification email.
-   * 
-   * @param email - The email address to send verification to
-   * @returns Message confirming email was sent
-   */
+  // Request a new verification email.
+  // email - The email address to send verification to.
+  // Returns message confirming email was sent.
   async requestVerificationEmail(email: string): Promise<EmailVerificationResponse> {
     console.log('[API] Requesting verification email for:', email);
     
@@ -657,15 +605,12 @@ export class BaseApi {
   // SET PASSWORD (FOR OAUTH-ONLY ACCOUNTS)
   // ========================================================================
 
-  /**
-   * Set password for OAuth-only accounts.
-   * 
-   * Allows users who registered via Google OAuth to set a password
-   * so they can also log in with email/password.
-   * 
-   * @param newPassword - The password to set (min 8 characters)
-   * @returns Success message
-   */
+  // Set password for OAuth-only accounts.
+  //
+  // Allows users who registered via Google OAuth to set a password
+  // so they can also log in with email/password.
+  // newPassword - The password to set (min 8 characters).
+  // Returns success message.
   async setPassword(newPassword: string): Promise<SetPasswordResponse> {
     console.log('[API] Setting password for OAuth account');
     
@@ -789,13 +734,10 @@ export class BaseApi {
 //   authApi.logout();
 //   authApi.listApiKeys();
 
-/**
- * Creates an auth API client instance.
- * Preferred over class inheritance - simpler and cleaner.
- * 
- * @param apiBaseUrl - The backend API base URL
- * @returns A BaseApi instance with all auth methods
- */
+// Creates an auth API client instance.
+// Preferred over class inheritance - simpler and cleaner.
+// apiBaseUrl - The backend API base URL.
+// Returns a BaseApi instance with all auth methods.
 export function createAuthApi(apiBaseUrl: string): BaseApi {
   return new BaseApi(apiBaseUrl);
 }

@@ -3,10 +3,8 @@
 // Universal types for authentication and API responses
 // ========================================================================
 
-/**
- * Authenticated user interface.
- * Represents the user data returned from authentication endpoints.
- */
+// Authenticated user interface.
+// Represents the user data returned from authentication endpoints.
 export interface User {
   id: string;
   email: string;
@@ -22,9 +20,7 @@ export interface User {
   has_google_linked?: boolean;
 }
 
-/**
- * API Key interface for MCP servers and external integrations.
- */
+// API Key interface for MCP servers and external integrations.
 export interface ApiKey {
   id: string;
   name: string;
@@ -36,10 +32,8 @@ export interface ApiKey {
   created_at: string;
 }
 
-/**
- * Response from creating a new API key.
- * Includes the full key (only shown once).
- */
+// Response from creating a new API key.
+// Includes the full key (only shown once).
 export interface ApiKeyCreateResponse {
   api_key: string;  // Full key - only shown once!
   id: string;
@@ -52,18 +46,14 @@ export interface ApiKeyCreateResponse {
   message: string;
 }
 
-/**
- * Login/Register response with tokens and user data.
- */
+// Login/Register response with tokens and user data.
 export interface AuthResponse {
   access_token: string;
   refresh_token?: string;
   user: User;
 }
 
-/**
- * Google OAuth login response.
- */
+// Google OAuth login response.
 export interface GoogleOAuthResponse {
   message: string;
   access_token: string;
@@ -75,32 +65,24 @@ export interface GoogleOAuthResponse {
   is_account_link?: boolean;
 }
 
-/**
- * Password reset request response.
- */
+// Password reset request response.
 export interface PasswordResetRequestResponse {
   message: string;
   dev_token?: string;  // Only in development mode
 }
 
-/**
- * Password reset response.
- */
+// Password reset response.
 export interface PasswordResetResponse {
   message: string;
 }
 
-/**
- * Email verification response.
- */
+// Email verification response.
 export interface EmailVerificationResponse {
   message: string;
   dev_token?: string;  // Only in development mode
 }
 
-/**
- * Set password response (for OAuth-only accounts).
- */
+// Set password response (for OAuth-only accounts).
 export interface SetPasswordResponse {
   message: string;
 }

@@ -15,46 +15,24 @@
 //   const authApi = createAuthApi(createApiUrl());
 // ========================================================================
 
-/**
- * Options for createApiUrl.
- */
+// Options for createApiUrl.
 export interface CreateApiUrlOptions {
-  /** 
-   * Override the env variable name. Default: 'VITE_DATABASE_API_URL'.
-   * This is read from import.meta.env at call time.
-   */
+  // Override the env variable name. Default: 'VITE_DATABASE_API_URL'.
+  // This is read from import.meta.env at call time.
   envVar?: string;
   
-  /**
-   * Fallback URL for local development (only used when import.meta.env.DEV is true).
-   * Default: 'http://localhost:8000'
-   */
+  // Fallback URL for local development (only used when import.meta.env.DEV is true).
+  // Default: 'http://localhost:8000'
   devFallback?: string;
 }
 
-/**
- * Resolves the backend API URL for the current environment.
- * 
- * Resolution order:
- * 1. `import.meta.env.VITE_DATABASE_API_URL` (injected at build time)
- * 2. `import.meta.env.VITE_API_URL` (alternative env var name)
- * 3. In development mode only: devFallback (default: 'http://localhost:8000')
- * 4. In production: empty string (will cause API calls to fail loudly)
- * 
- * @param options - Configuration options
- * @returns The resolved API base URL
- * 
- * @example
- * ```typescript
- * import { createApiUrl, createAuthApi } from '@rationalbloks/frontblok-auth';
- * 
- * // Simple usage
- * const authApi = createAuthApi(createApiUrl());
- * 
- * // Custom dev fallback
- * const authApi = createAuthApi(createApiUrl({ devFallback: 'http://localhost:3000' }));
- * ```
- */
+// Resolves the backend API URL for the current environment.
+//
+// Resolution order:
+// 1. import.meta.env.VITE_DATABASE_API_URL (injected at build time)
+// 2. import.meta.env.VITE_API_URL (alternative env var name)
+// 3. In development mode only: devFallback (default: 'http://localhost:8000')
+// 4. In production: empty string (will cause API calls to fail loudly)
 export function createApiUrl(options: CreateApiUrlOptions = {}): string {
   const { devFallback = 'http://localhost:8000' } = options;
   
