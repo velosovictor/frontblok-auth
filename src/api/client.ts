@@ -643,19 +643,18 @@ export class BaseApi {
   async logout(): Promise<void> {
     console.log('[API] Logging out');
     
-    if (this.refreshToken) {
-      try {
+    try {
+      if (this.refreshToken) {
         await this.request('/api/auth/logout', {
           method: 'POST',
           body: JSON.stringify({ refresh_token: this.refreshToken }),
         });
         console.log('[API] Refresh token revoked on server');
-      } catch (error) {
-        console.warn('[API] Failed to revoke refresh token on server:', error);
       }
+    } finally {
+      // Always clear local auth state, even if server revocation failed
+      this.clearAuth();
     }
-    
-    this.clearAuth();
   }
 
   async logoutAllDevices(): Promise<void> {
@@ -664,11 +663,10 @@ export class BaseApi {
     try {
       await this.request('/api/auth/logout-all', { method: 'POST' });
       console.log('[API] All sessions revoked on server');
-    } catch (error) {
-      console.warn('[API] Failed to revoke all sessions:', error);
+    } finally {
+      // Always clear local auth state, even if server revocation failed
+      this.clearAuth();
     }
-    
-    this.clearAuth();
   }
 
   protected clearAuth(): void {

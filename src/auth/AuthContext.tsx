@@ -108,7 +108,11 @@ export function createAuthProvider(api: BaseApi) {
                 error: null,
               });
             } else {
-              console.warn('[Auth] Keeping user logged in with cached data');
+              // Surface the error — don't silently serve stale cached data
+              setState(prev => ({
+                ...prev,
+                error: error instanceof Error ? error.message : 'Failed to refresh user data',
+              }));
             }
           }
         }
@@ -176,15 +180,12 @@ export function createAuthProvider(api: BaseApi) {
     };
 
     const refreshUser = async () => {
-      try {
-        const currentUser = await api.getCurrentUser();
-        setState(prev => ({
-          ...prev,
-          user: currentUser,
-        }));
-      } catch (error) {
-        console.error('[Auth] Failed to refresh user:', error);
-      }
+      const currentUser = await api.getCurrentUser();
+      setState(prev => ({
+        ...prev,
+        user: currentUser,
+      }));
+      // No catch — callers must handle errors instead of getting silent staleness
     };
 
     return (
