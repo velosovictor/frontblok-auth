@@ -624,6 +624,18 @@ export class BaseApi {
   // ACCOUNT MANAGEMENT
   // ========================================================================
 
+  // Verify password without performing any destructive operation.
+  // Used before account deletion to ensure password is correct BEFORE
+  // deleting any projects.
+  async verifyPassword(password: string): Promise<{ verified: boolean }> {
+    console.log('[API] Verifying password');
+    
+    return this.request<{ verified: boolean }>('/api/auth/verify-password', {
+      method: 'POST',
+      body: JSON.stringify({ password }),
+    });
+  }
+
   async deleteAccount(password: string, confirmText: string): Promise<{ message: string; note: string }> {
     console.log('[API] Deleting account (DESTRUCTIVE)');
     
